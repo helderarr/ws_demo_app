@@ -1,0 +1,8 @@
+pandas
+numpy
+elasticsearch
+streamlit
+streamlit-agraph
+scipy
+transformers
+torch
