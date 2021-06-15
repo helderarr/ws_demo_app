@@ -39,7 +39,7 @@ class PageRankPassageRanker(PipelineStep):
 
 
         # create DataFrame using data
-        df = pd.DataFrame(ranked_data_zip, columns=['Order', 'passage', 'page_rank',"conversation_utterance_id", "utterance","entities","passage_id"])
+        df = pd.DataFrame(ranked_data_zip, columns=['Order', 'passage', 'page_rank',"conversation_utterance_id", "utterance","passage_id","entities"])
         return df
 
     def buildGraph(self, named_entity_data):
@@ -102,6 +102,29 @@ class PageRankPassageRanker(PipelineStep):
             for j in range(len(entities[i])):
                 importancy[i] += scores[order.index(entities[i][j])]
         return importancy
+
+
+    def importancy_heuristic_td_idf(self, entities, scores, order):
+        importancy = np.zeros(len(entities))
+        graph = {}
+        for p in order:
+            aux = 0
+            for i in range(len(entities)):
+                for j in range(len(entities[i])):
+                    if (entities[i][j] == p):
+                        aux += 1
+            graph[p] = aux
+        for i in range(len(entities)):
+            for j in range(len(entities[i])):
+                importancy[i] += scores[order.index(entities[i][j])] / graph.get(entities[i][j])
+
+    def importancy_heuristic_exp(self, entities, scores, order):
+        importancy = np.zeros(len(entities))
+        for i in range(len(entities)):
+            for j in range(len(entities[i])):
+                importancy[i] += np.exp(scores[order.index(entities[i][j])])
+        return importancy
+
 
     def ranked_data_builder(self, importancy, named_entity_data):
         aux = []

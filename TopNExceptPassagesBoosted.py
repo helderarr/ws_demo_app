@@ -11,7 +11,7 @@ class TopNExceptPassagesBoosted(PipelineStep):
         self.keep_filtered_entities = keep_filtered_entities
 
     def run(self, data: DataFrame) -> DataFrame:
-        data['int_rank'] = data['page_rank'].rank(ascending=False)
+        data['int_rank'] = data['page_rank'].rank(ascending=False, method='first')
 
         data_top = data[data["int_rank"] <= self.n]
         data_tail = data[data["int_rank"] > self.n]
@@ -22,7 +22,7 @@ class TopNExceptPassagesBoosted(PipelineStep):
         to_boost = data_tail_ents.keys() - data_top_ents.keys()
 
         data_tail["entities"] = data_tail["entities"].apply(lambda x: self.boost_list(x, to_boost))
-
+        data_tail['int_rank'] = data_tail['int_rank'] - self.n
         return data_tail
 
     def boost_list(self, entities: list, to_boost: list):

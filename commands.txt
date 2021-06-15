@@ -1,0 +1,20 @@
+RUN IN CONSOLE:
+streamlit run /Users/helder/GitHub/ws_demo_app/main.py
+
+CREATE DOCKER:
+docker login
+docker build -f DOCKERFILE -t blinkqa:latest .
+docker tag blinkqa:latest heldertechnip/blinkqa:latest
+docker tag blinkqa:latest heldertechnip/blinkqa:1.0.0
+docker push heldertechnip/blinkqa:1.0.0
+
+RUN WITH DOCKER:
+docker run -p 8501:8501 blinkqa:latest
+
+
+
+# Prune everything
+docker system prune
+
+# Only prune images
+docker image prune

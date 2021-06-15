@@ -4,12 +4,18 @@ from interfaces import PipelineStep
 
 
 class PrintCenterEntity(PipelineStep):
+
+    def __init__(self):
+        super(PrintCenterEntity, self).__init__()
+        self.center_entity = None
+
     def run(self, data: DataFrame) -> DataFrame:
 
         ents, scores = self.merge_entities(data)
 
         if len(ents) == 0:
             print("No entities found.")
+            self.center_entity = None
             return data
 
         max_score = 0
@@ -19,7 +25,8 @@ class PrintCenterEntity(PipelineStep):
                 entity_with_max_score = ent
                 max_score = scores[ent]
 
-        print("Center Entity:",ents[entity_with_max_score])
+        self.center_entity = ents[entity_with_max_score]
+        print("Center Entity:",self.center_entity)
 
         return data
 
